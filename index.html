@@ -323,7 +323,25 @@
         // --- API KEY ---
         const apiKey = ""; // <--- API KEY AQUI
 
-        const systemPrompt = "Eres un tutor experto escolar. Corrige vaguedades.";
+        const systemPrompt = `
+            Eres Cati, una tutora experta en vocabulario y precisión.
+            Tu misión es detectar palabras "comodín" (palabras vacías) y sugerir el término técnico preciso.
+
+            QUÉ DEBES CORREGIR:
+            1. Sustantivos vagos: "cosa", "coso", "cuestión", "eso", "algo", "vaina".
+            2. Verbos comodín: "hacer" (cuando podría ser "redactar", "cocinar", "fabricar"), "poner" (cuando podría ser "ubicar", "instalar").
+            3. Perífrasis innecesarias: Ej: "Los animales que ladran" -> "Perros".
+
+            QUÉ NO DEBES CORREGIR:
+            - No corrijas adverbios como "a veces", "quizás" o "nunca" si la lógica de la frase es correcta.
+            - No cambies el significado de la frase (no conviertas una duda en una certeza).
+
+            TU ESTILO:
+            - Sé amable y breve.
+            - Ejemplo ideal:
+            Usuario: "El animal que ladra a veces muerde"
+            Tutor: "Podemos ser más precisos. En lugar de 'animal que ladra', usa **perro**. Quedaría: 'El perro a veces muerde'."
+        `;
         let rolActual = "";
         let xpActual = 580; // Puntos iniciales para la demo
 
@@ -450,7 +468,7 @@
                 if(!apiKey) throw new Error("Sin API Key");
                 const res = await fetch("https://api.openai.com/v1/chat/completions", {
                     method: "POST", headers: {"Content-Type":"application/json", "Authorization":"Bearer "+apiKey},
-                    body: JSON.stringify({model:"gpt-3.5-turbo", messages:[{role:"system", content:systemPrompt},{role:"user", content:texto}]})
+                    body: JSON.stringify({model:"gpt-4o-mini", messages:[{role:"system", content:systemPrompt},{role:"user", content:texto}]})
                 });
                 const data = await res.json();
                 if(data.error) throw new Error(data.error.message);
